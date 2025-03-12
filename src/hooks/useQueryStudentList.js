@@ -11,7 +11,7 @@ const fetchStudents = async () => {
     });
 };
 
-export const useStudentsQuery = () => {
+export default function useStudentsQuery() {
     return useQuery({
         queryKey: ["students"],
         queryFn: fetchStudents,
