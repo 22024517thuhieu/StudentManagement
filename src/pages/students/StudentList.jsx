@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Table, Button, Input, Dropdown, Menu } from "antd";
+import { Table, Button, Input, Dropdown, Menu, Spin } from "antd";
 import { SearchOutlined, SettingOutlined, PlusOutlined, DownOutlined, DeleteOutlined, EditOutlined, EyeOutlined, MoreOutlined } from "@ant-design/icons";
 
 import { useNavigate } from "react-router";
 
-const students = Array.from({ length: 16 }, (_, index) => ({
-  key: index + 1,
-  code: index === 0 ? "22024517" : "MÃ SINH VIÊN",
-  name: "HỌ TÊN",
-  dob: "NGÀY SINH",
-  gender: "GIỚI TÍNH",
-  address: "ĐỊA CHỈ",
-  city: "THÀNH PHỐ",
-  email: "EMAIL",
-  phone: "SỐ ĐIỆN THOẠI",
-  class: "MÃ LỚP",
-}));
+import useStudentsQuery from "../../hooks/useQueryStudentList";
+
+// const students = Array.from({ length: 16 }, (_, index) => ({
+//   key: index + 1,
+//   code: index === 0 ? "22024517" : "MÃ SINH VIÊN",
+//   name: "HỌ TÊN",
+//   dob: "NGÀY SINH",
+//   gender: "GIỚI TÍNH",
+//   address: "ĐỊA CHỈ",
+//   city: "THÀNH PHỐ",
+//   email: "EMAIL",
+//   phone: "SỐ ĐIỆN THOẠI",
+//   class: "MÃ LỚP",
+// }));
 
 const menu = (
   <Menu>
@@ -41,33 +43,39 @@ export default function StudentList() {
   const columns = [
     { title: "STT", dataIndex: "key" },
     { title: "MÃ SINH VIÊN", dataIndex: "code" },
-    { title: "HỌ TÊN", dataIndex: "name" },
+    { title: "HỌ TÊN", dataIndex: "fullname" },
     { title: "NGÀY SINH", dataIndex: "dob" },
-    { title: "GIỚI TÍNH", dataIndex: "gender" },
+    { title: "GIỚI TÍNH", dataIndex: "sex" },
     { title: "ĐỊA CHỈ", dataIndex: "address" },
-    { title: "THÀNH PHỐ", dataIndex: "city" },
+    { title: "THÀNH PHỐ", dataIndex: "homecity" },
     { title: "EMAIL", dataIndex: "email" },
-    { title: "SỐ ĐIỆN THOẠI", dataIndex: "phone" },
+    { title: "SỐ ĐIỆN THOẠI", dataIndex: "phone_number" },
     { title: "MÃ LỚP", dataIndex: "class" },
     {
       title: "HÀNH ĐỘNG",
       dataIndex: "actions",
       align: "center",
       width: "150px",
-      render: (_, record) => (
-        <div className="flex justify-center gap-2">
-          <Button icon={<DeleteOutlined style={{ color: "red" }} />} shape="circle" />
-          <Button icon={<EditOutlined />} shape="circle" />
-          <Button icon={<EyeOutlined />} shape="circle" />
-          <Dropdown overlay={<Menu><Menu.Item key="1">Tùy chọn khác</Menu.Item></Menu>} trigger={["click"]}>
-            <Button icon={<MoreOutlined />} shape="circle" />
-          </Dropdown>
-        </div>
-      ),
+      render: (_, record) => {
+        console.log(record, "record");
+        
+        return (
+          <div className="flex justify-center gap-2">
+            <Button icon={<DeleteOutlined style={{ color: "red" }} />} shape="circle" />
+            <Button icon={<EditOutlined />} shape="circle" />
+            <Button onClick={() => navigate(`/students/details`, { state: { student: record } })} icon={<EyeOutlined />} shape="circle" />
+            <Dropdown overlay={<Menu><Menu.Item key="1">Tùy chọn khác</Menu.Item></Menu>} trigger={["click"]}>
+              <Button icon={<MoreOutlined />} shape="circle" />
+            </Dropdown>
+          </div>
+        )
+      },
     },
   ];
 
+  const { students, isLoading } = useStudentsQuery();
 
+  if (isLoading) return <Spin/>
 
   return (
     <div className="bg-white m-4 p-4 shadow-md rounded-lg">

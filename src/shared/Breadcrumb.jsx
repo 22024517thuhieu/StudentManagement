@@ -8,7 +8,7 @@ export default function Breadcrumb() {
     const breadcrumbItems = {
         '/': 'Trang chủ',
         '/students': 'Quản lí sinh viên',
-        '/students/import': 'Nhập',
+        '/students/details': 'Xem chi tiết',
         '/students/new': 'Thêm mới',
         '/class': 'Quản lí lớp học'
     };
