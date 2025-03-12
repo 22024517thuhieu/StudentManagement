@@ -11,6 +11,7 @@ import Breadcrumb from "./shared/Breadcrumb.jsx";
 import StudentList from "./pages/students/StudentList.jsx";
 import StudentNew from "./pages/students/StudentNew.jsx";
 import StudentDetail from "./pages/students/StudentDetail.jsx";
+import StudentEdit from "./pages/students/StudentEdit.jsx";
 import HomePage from "./pages/HomePage.jsx";
 
 const root = document.getElementById("root");
@@ -27,6 +28,7 @@ ReactDOM.createRoot(root).render(
           <Route path="/students" element={<StudentList />} />
           <Route path="/students/new" element={<StudentNew />} />
           <Route path="/students/details" element={<StudentDetail />} />
+          <Route path="/students/edit" element={<StudentEdit />} />
           <Route path="/class" element={<StudentList />} />
         </Routes>
       </BrowserRouter>

@@ -7,9 +7,10 @@ export default function Breadcrumb() {
 
     const breadcrumbItems = {
         '/': 'Trang chủ',
-        '/students': 'Quản lí sinh viên',
-        '/students/details': 'Xem chi tiết',
-        '/students/new': 'Thêm mới',
+        '/students': 'QUẢN LÍ SINH VIÊN',
+        '/students/details': 'XEM CHI TIẾT',
+        '/students/new': 'THÊM MỚI',
+        '/students/edit': 'CẬP NHẬT THÔNG TIN',
         '/class': 'Quản lí lớp học'
     };
 
@@ -31,7 +32,9 @@ export default function Breadcrumb() {
                 {breadcrumbPaths.map((item, index) => (
                     <AntdBreadcrumb.Item
                         key={item.path}
-                        onClick={() => navigate(item.path)}
+                        onClick={() => {
+                            if (item.path !== location.pathname) navigate(item.path);
+                        }}
                         className={`cursor-pointer ${index === breadcrumbPaths.length - 1 ? "font-bold" : ""}`}
                     >
                         {item.label}
