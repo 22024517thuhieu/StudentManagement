@@ -1,0 +1,26 @@
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #5A9F68 !important;
+    border-color: #5A9F68;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #5A9F68 !important;
+    border-color: #5A9F68 !important;
+}
+
+.ant-checkbox-checked:hover .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #5A9F68 !important;
+    border-color: #5A9F68 !important;
+}
+
+.ant-checkbox-checked:after {
+    border-color: #5A9F68 !important;
+}
+
+.ant-checkbox:hover::after {
+    border-color: #5A9F68 !important;
+}
+
+.ant-checkbox:hover .ant-checkbox-inner {
+    border-color: #5A9F68 !important;
+}
