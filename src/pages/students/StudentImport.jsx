@@ -1,11 +1,13 @@
-import { Table, Button, Dropdown, Menu, Modal } from "antd";
-import { DownOutlined, DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Table, Button, Modal } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
 import useModal from "../../hooks/useModal";
+import useDeleteItems from "../../apis/useDeleteStudents";
 
 import { ReturnButton } from "../../shared/ReturnButton";
 import { EditButton } from "../../shared/EditButton";
+import ImportButton from "./components/UploadButton";
 
 const dataSource = [
     { key: "1", studentId: "22024517", name: "Nguyễn Văn A", dob: "01/01/2000", gender: "Nam", address: "Hà Nội", city: "Hà Nội", email: "a@gmail.com", class: "IT01", username: "nguyenvana" },
@@ -19,15 +21,8 @@ export default function StudentImport() {
         showModal,
         handleClose,
     } = useModal();
+    const useDeleteItemsMutation = useDeleteItems();
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-    const menu = (
-        <Menu>
-            <Menu.Item>
-                Import mặc định(xslx)
-            </Menu.Item>
-        </Menu>
-    );
 
     const allColumns = [
         { key: "studentId", title: "Mã Sinh Viên", dataIndex: "studentId" },
@@ -51,6 +46,10 @@ export default function StudentImport() {
             ),
         },
     ];
+    const deleteStudents = () => {
+        useDeleteItemsMutation.mutate(selectedRowKeys);
+        handleClose();
+    }
 
     return (
         <div className="m-4 p-4 shadow-md rounded-lg bg-white">
@@ -60,9 +59,7 @@ export default function StudentImport() {
             <div className="flex justify-between items-center mt-4">
                 <Button danger onClick={showModal}>Xóa dữ liệu đã chọn</Button>
                 <div className="flex gap-2">
-                    <Dropdown overlay={menu} trigger={["click"]}>
-                        <Button type="primary" className="bg-[#5A9F68]!">Import Dữ Liệu <DownOutlined /></Button>
-                    </Dropdown>
+                    <ImportButton />
                     <Button className="border-green-500 text-green-500">Xuất Mẫu Import</Button>
                 </div>
             </div>
@@ -92,11 +89,13 @@ export default function StudentImport() {
                 centered
             >
                 <div className="flex flex-col items-center borde p-4 rounded-lg text-red-700">
-                    <p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
-                    <div className="flex gap-4 mt-4">
-                        <Button className="bg-red-700! text-white! px-6" onClick={handleClose}>ĐỒNG Ý</Button>
-                        <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
-                    </div>
+                    {selectedRowKeys.length === 0
+                        ? <p className="text-center">Vui lòng chọn dữ liệu để xóa</p>
+                        : <><p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
+                            <div className="flex gap-4 mt-4">
+                                <Button className="bg-red-700! text-white! px-6" onClick={deleteStudents}>ĐỒNG Ý</Button>
+                                <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
+                            </div></>}
                 </div>
             </Modal>
         </div>

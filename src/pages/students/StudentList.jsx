@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 
 import useModal from "../../hooks/useModal";
 import useFiltersStore from "../../store/FilterStore";
+import useDeleteItems from "../../apis/useDeleteStudents";
 // import useStudentsQuery from "../../hooks/useQueryStudentList";
 
 import FilterButton from "./components/FilterButton";
@@ -35,6 +36,11 @@ export default function StudentList() {
     showModal,
     handleClose,
   } = useModal();
+  const useDeleteItemsMutation = useDeleteItems();
+  const deleteStudents = () => {
+    useDeleteItemsMutation.mutate(selectedRowKeys);
+    handleClose();
+  }
 
   const navigate = useNavigate();
 
@@ -117,11 +123,13 @@ export default function StudentList() {
         centered
       >
         <div className="flex flex-col items-center borde p-4 rounded-lg text-red-700">
-          <p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
-          <div className="flex gap-4 mt-4">
-            <Button className="bg-red-700! text-white! px-6" onClick={handleClose}>ĐỒNG Ý</Button>
-            <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
-          </div>
+          {selectedRowKeys.length === 0
+            ? <p className="text-center">Vui lòng chọn dữ liệu để xóa</p>
+            : <><p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
+              <div className="flex gap-4 mt-4">
+                <Button className="bg-red-700! text-white! px-6" onClick={deleteStudents}>ĐỒNG Ý</Button>
+                <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
+              </div></>}
         </div>
       </Modal>
     </div>
