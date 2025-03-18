@@ -5,6 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import * as z from "zod";
+import { ReturnButton } from "../../shared/ReturnButton";
 
 const schema = z.object({
     studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
@@ -102,8 +103,8 @@ export default function StudentEdit() {
                     </Form.Item>
                 )} />
                 <div className="col-span-4 flex justify-center gap-4 mt-4">
-                    <Button type="default" className="bg-gray-200 h-12!" onClick={() => navigate("/students")}>Trở về danh sách</Button>
-                    <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-12!">Lưu</Button>
+                    <ReturnButton />
+                    <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button>
                 </div>
             </Form>
             {serverError && <Alert message={serverError} type="error" className="mt-4" showIcon />}

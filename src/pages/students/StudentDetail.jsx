@@ -3,6 +3,7 @@ import { Descriptions, Card, Button } from "antd";
 import { EditOutlined, DeleteOutlined, PrinterOutlined, DownloadOutlined } from "@ant-design/icons";
 
 import { useLocation, useNavigate } from "react-router";
+import { ReturnButton } from "../../shared/ReturnButton";
 
 const StudentDetails = () => {
   const location = useLocation();
@@ -14,7 +15,7 @@ const StudentDetails = () => {
   return (
     <div className="flex justify-center items-center bg-gray-100 p-4">
       <Card className="shadow-md w-full p-8!">
-      <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Chi tiết Sinh viên</h2>
           <div className="flex gap-2">
             <Button icon={<EditOutlined />} shape="square" size="large" style={{ background: "#4CAF50", color: "white" }} />
@@ -37,7 +38,7 @@ const StudentDetails = () => {
         </Descriptions>
 
         <div className="flex justify-end mt-4">
-          <Button onClick={() => navigate(-1)}>Trở về danh sách</Button>
+          <ReturnButton />
         </div>
       </Card>
     </div>

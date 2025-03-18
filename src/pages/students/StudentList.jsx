@@ -9,6 +9,7 @@ import useFiltersStore from "../../store/FilterStore";
 // import useStudentsQuery from "../../hooks/useQueryStudentList";
 
 import FilterButton from "./components/FilterButton";
+import { EditButton } from "../../shared/EditButton";
 
 const students = Array.from({ length: 16 }, (_, index) => ({
   key: index + 1,
@@ -29,22 +30,17 @@ export default function StudentList() {
     setPageSize(pageSize);
   }
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: setSelectedRowKeys,
-  };
   const {
     isModalVisible,
     showModal,
-    handleOk,
-    handleCancel,
+    handleClose,
   } = useModal();
 
   const navigate = useNavigate();
 
   const menu = (
     <Menu>
-      <Menu.Item key="1">Nhập dữ liệu từ file</Menu.Item>
+      <Menu.Item key="1" onClick={() => navigate("/students/import")}>Nhập dữ liệu từ file</Menu.Item>
       <Menu.Item key="2">Xuất dữ liệu theo mẫu</Menu.Item>
       <Menu.Item key="3" onClick={showModal}>Xóa dữ liệu đã chọn</Menu.Item>
     </Menu>
@@ -71,7 +67,7 @@ export default function StudentList() {
         return (
           <div className="flex justify-center gap-2">
             <Button onClick={showModal} icon={<DeleteOutlined style={{ color: "red" }} />} shape="circle" ></Button>
-            <Button onClick={() => navigate(`/students/edit`, { state: { student: record } })} icon={<EditOutlined />} shape="circle" />
+            <EditButton record={record} />
             <Button onClick={() => navigate(`/students/details`, { state: { student: record } })} icon={<EyeOutlined />} shape="circle" />
             <Dropdown overlay={<Menu><Menu.Item key="1">Export</Menu.Item></Menu>} trigger={["click"]}>
               <Button icon={<MoreOutlined />} shape="circle" />
@@ -106,22 +102,25 @@ export default function StudentList() {
       <Table
         columns={filteredColumns}
         dataSource={students}
-        rowSelection={rowSelection}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: setSelectedRowKeys,
+        }}
         pagination={{ pageSize: pageSize, showSizeChanger: true, pageSizeOptions: ['5', '10', '20'], onChange: onChangeSize }}
       />
       <Modal
         title=" "
         open={isModalVisible}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        onOk={handleClose}
+        onCancel={handleClose}
         footer={null}
         centered
       >
         <div className="flex flex-col items-center borde p-4 rounded-lg text-red-700">
           <p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
           <div className="flex gap-4 mt-4">
-            <Button className="bg-red-700! text-white! px-6" onClick={handleOk}>ĐỒNG Ý</Button>
-            <Button className="border text-red-700! px-6" onClick={handleCancel}>KHÔNG</Button>
+            <Button className="bg-red-700! text-white! px-6" onClick={handleClose}>ĐỒNG Ý</Button>
+            <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
           </div>
         </div>
       </Modal>

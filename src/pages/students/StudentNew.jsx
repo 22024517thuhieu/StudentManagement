@@ -2,8 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button, DatePicker, Select } from "antd";
-
-import { useNavigate } from "react-router";
+import { ReturnButton } from "../../shared/ReturnButton";
 
 const schema = z.object({
     studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
@@ -26,8 +25,6 @@ export default function StudentNew() {
         console.log("Submitted Data:", data);
     };
 
-    const navigate = useNavigate();
-
     return (
         <div className="p-6 bg-white shadow-md rounded-md">
             <h2 className="text-center text-2xl font-medium mb-4 text-[#4C4E648A]">Thêm mới sinh viên</h2>
@@ -35,7 +32,7 @@ export default function StudentNew() {
                 <Input className="col-span-2 h-12" placeholder="Mã sinh viên(*)" {...register("studentId")} />
                 <Input className="col-span-4 h-12" placeholder="Họ tên" {...register("name")} />
                 <DatePicker placeholder="Ngày sinh" className="col-span-3 h-12" {...register("dob")} />
-                <Select placeholder="Giới tính" className="col-span-3 h-12" {...register("gender")}>
+                <Select placeholder="Giới tính" className="col-span-3 h-12!" {...register("gender")}>
                     <Select.Option value="Nam">Nam</Select.Option>
                     <Select.Option value="Nữ">Nữ</Select.Option>
                     <Select.Option value="Khác">Khác</Select.Option>
@@ -49,7 +46,7 @@ export default function StudentNew() {
                 <div className="col-span-6 flex justify-center gap-4 mt-4">
                     <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button>
                     <Button type="primary" className="bg-[#43DB61]! h-10!">Lưu và tiếp tục</Button>
-                    <Button className="h-10!" onClick={() => navigate("/students")}>Trở về danh sách</Button>
+                    <ReturnButton />
                 </div>
             </form>
         </div>
