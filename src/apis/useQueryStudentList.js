@@ -8,7 +8,7 @@ const fetchStudents = async () => {
 
 export default function useStudentsQuery() {
     const {data, isLoading} = useQuery({
-        queryKey: ["students"],
+        queryKey: "students",
         queryFn: fetchStudents,
     });
     const students = data ? data.map((item, index) => ({

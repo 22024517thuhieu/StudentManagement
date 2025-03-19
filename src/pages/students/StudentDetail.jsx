@@ -2,12 +2,11 @@ import React from "react";
 import { Descriptions, Card, Button } from "antd";
 import { EditOutlined, DeleteOutlined, PrinterOutlined, DownloadOutlined } from "@ant-design/icons";
 
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { ReturnButton } from "../../shared/ReturnButton";
 
 const StudentDetails = () => {
   const location = useLocation();
-  const navigate = useNavigate();
   const student = location.state?.student;
 
   if (!student) return <p>Không có dữ liệu sinh viên.</p>;

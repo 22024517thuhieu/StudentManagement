@@ -2,6 +2,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input, Button, DatePicker, Select } from "antd";
+import useAddStudent from "../../apis/useAddStudent";
+
 import { ReturnButton } from "../../shared/ReturnButton";
 
 const schema = z.object({
@@ -21,8 +23,12 @@ export default function StudentNew() {
     const { register, handleSubmit, formState: { errors }, control } = useForm({
         resolver: zodResolver(schema)
     });
+    console.log(errors);
+    const addMutation = useAddStudent();
     const onSubmit = (data) => {
         console.log("Submitted Data:", data);
+        // await addMutation.mutateAsync(data);
+        console.log("them ok");
     };
 
     return (

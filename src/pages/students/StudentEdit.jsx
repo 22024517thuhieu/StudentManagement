@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import { Button, Input, Select, DatePicker, Alert, Form } from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,7 +10,7 @@ import { ReturnButton } from "../../shared/ReturnButton";
 const schema = z.object({
     studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
     name: z.string().min(1, "Họ tên là bắt buộc"),
-    dob: z.date().optional(),
+    dob: z.optional(),
     gender: z.string().optional(),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -22,8 +22,7 @@ const schema = z.object({
 
 export default function StudentEdit() {
     const location = useLocation();
-    const navigate = useNavigate();
-    const student = location.state.student;
+    const student = location.state.student;    
 
     const { handleSubmit, control, formState: { errors }, setError } = useForm({
         resolver: zodResolver(schema),
@@ -32,6 +31,12 @@ export default function StudentEdit() {
             name: student.fullname,
             dob: dayjs(student.dob),
             gender: student.sex,
+            address: student.address,
+            city: student.homecity,
+            email: student.email,
+            phone: student.phone_number,
+            class: student.classid[1],
+            username: student.username
         },
     });
     const [serverError, setServerError] = useState(null);

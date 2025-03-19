@@ -7,23 +7,10 @@ import { useNavigate } from "react-router";
 import useModal from "../../hooks/useModal";
 import useFiltersStore from "../../store/FilterStore";
 import useDeleteItems from "../../apis/useDeleteStudents";
-// import useStudentsQuery from "../../hooks/useQueryStudentList";
+import useStudentsQuery from "../../apis/useQueryStudentList"
 
 import FilterButton from "./components/FilterButton";
 import { EditButton } from "../../shared/EditButton";
-
-const students = Array.from({ length: 16 }, (_, index) => ({
-  key: index + 1,
-  code: index === 0 ? "22024517" : "MÃ SINH VIÊN",
-  fullname: "HỌ TÊN",
-  dob: "NGÀY SINH",
-  sex: "GIỚI TÍNH",
-  address: "ĐỊA CHỈ",
-  homecity: "THÀNH PHỐ",
-  email: "EMAIL",
-  phone_number: "SỐ ĐIỆN THOẠI",
-  class: "MÃ LỚP",
-}));
 
 export default function StudentList() {
   const [pageSize, setPageSize] = useState(5);
@@ -37,9 +24,14 @@ export default function StudentList() {
     handleClose,
   } = useModal();
   const useDeleteItemsMutation = useDeleteItems();
-  const deleteStudents = () => {
-    useDeleteItemsMutation.mutate(selectedRowKeys);
+
+  const deleteStudents = async () => {
+    const selectedStudents = students.map((item) => {
+      if (selectedRowKeys.includes(item.key)) return item.id;
+    })
+    useDeleteItemsMutation.mutate(selectedStudents);
     handleClose();
+    setSelectedRowKeys([]);
   }
 
   const navigate = useNavigate();
@@ -47,7 +39,7 @@ export default function StudentList() {
   const menu = (
     <Menu>
       <Menu.Item key="1" onClick={() => navigate("/students/import")}>Nhập dữ liệu từ file</Menu.Item>
-      <Menu.Item key="2">Xuất dữ liệu theo mẫu</Menu.Item>
+      <Menu.Item key="2" onClick={() => navigate("/students/export")}>Xuất dữ liệu theo mẫu</Menu.Item>
       <Menu.Item key="3" onClick={showModal}>Xóa dữ liệu đã chọn</Menu.Item>
     </Menu>
   );
@@ -72,7 +64,10 @@ export default function StudentList() {
       render: (_, record) => {
         return (
           <div className="flex justify-center gap-2">
-            <Button onClick={showModal} icon={<DeleteOutlined style={{ color: "red" }} />} shape="circle" ></Button>
+            <Button onClick={() => {
+              setSelectedRowKeys([record.key]);
+              showModal();
+            }} icon={<DeleteOutlined style={{ color: "red" }} />} shape="circle" ></Button>
             <EditButton record={record} />
             <Button onClick={() => navigate(`/students/details`, { state: { student: record } })} icon={<EyeOutlined />} shape="circle" />
             <Dropdown overlay={<Menu><Menu.Item key="1">Export</Menu.Item></Menu>} trigger={["click"]}>
@@ -88,8 +83,10 @@ export default function StudentList() {
     ...item,
     hidden: !checkedList.includes(item.key),
   }));
-  // const { students, isLoading } = useStudentsQuery();
-  // if (isLoading) return <Spin/>
+  const { students, isLoading } = useStudentsQuery();
+  console.log(students);
+  
+  if (isLoading) return <Spin/>
 
   return (
     <div className="bg-white m-4 p-4 shadow-md rounded-lg">

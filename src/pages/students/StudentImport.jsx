@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import useModal from "../../hooks/useModal";
 import useDeleteItems from "../../apis/useDeleteStudents";
+import useUploadFile from "../../apis/useUploadFile";
 
 import { ReturnButton } from "../../shared/ReturnButton";
 import { EditButton } from "../../shared/EditButton";
@@ -22,6 +23,9 @@ export default function StudentImport() {
         handleClose,
     } = useModal();
     const useDeleteItemsMutation = useDeleteItems();
+    const { data, isLoading } = useUploadFile();
+    console.log(data);
+    
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
     const allColumns = [
@@ -47,7 +51,7 @@ export default function StudentImport() {
         },
     ];
     const deleteStudents = () => {
-        useDeleteItemsMutation.mutate(selectedRowKeys);
+        // useDeleteItemsMutation.mutate(selectedRowKeys);
         handleClose();
     }
 

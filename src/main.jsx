@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 import './index.css'
 
@@ -21,6 +22,7 @@ const queryClient = new QueryClient()
 
 ReactDOM.createRoot(root).render(
   <QueryClientProvider client={queryClient}>
+    <ReactQueryDevtools initialIsOpen={false} />
     <div className="bg-gray-100 min-h-screen">
       <BrowserRouter>
         <Navbar />

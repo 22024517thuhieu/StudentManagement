@@ -1,6 +1,5 @@
 import { useMutation } from "react-query";
 import axios from "axios";
-import { message } from "antd";
 
 export default function useUploadFile() {
     return useMutation(
@@ -8,13 +7,14 @@ export default function useUploadFile() {
             const formData = new FormData();
             formData.append("file", file);
 
-            return axios.post("https://jsonplaceholder.typicode.com/posts", formData, {
+            return axios.post("http://localhost:8069//api/upload_students", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
         },
         {
-            onSuccess: () => message.success("File uploaded successfully!"),
-            onError: () => message.error("Upload failed!"),
+            onSuccess: (response) => console.log(response),
+            onError: (err) => console.log(err)
+            ,
         }
     );
 }
