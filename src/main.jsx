@@ -13,6 +13,7 @@ import StudentNew from "./pages/students/StudentNew.jsx";
 import StudentDetail from "./pages/students/StudentDetail.jsx";
 import StudentEdit from "./pages/students/StudentEdit.jsx";
 import StudentImport from "./pages/students/StudentImport.jsx";
+import StudentExport from "./pages/students/StudentExport.jsx";
 import HomePage from "./pages/HomePage.jsx";
 
 const root = document.getElementById("root");
@@ -31,6 +32,7 @@ ReactDOM.createRoot(root).render(
           <Route path="/students/details" element={<StudentDetail />} />
           <Route path="/students/edit" element={<StudentEdit />} />
           <Route path="/students/import" element={<StudentImport />} />
+          <Route path="/students/export" element={<StudentExport />} />
           <Route path="/class" element={<StudentList />} />
         </Routes>
       </BrowserRouter>

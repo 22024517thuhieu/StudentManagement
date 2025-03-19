@@ -12,6 +12,7 @@ export default function Breadcrumb() {
         '/students/new': 'THÊM MỚI',
         '/students/edit': 'CẬP NHẬT THÔNG TIN',
         '/students/import': 'IMPORT DỮ LIỆU',
+        '/students/export': 'EXPORT DỮ LIỆU',
         '/class': 'Quản lí lớp học'
     };
 
