@@ -1,6 +1,6 @@
 import React from "react";
-import { Table, Button } from "antd";
-import { PrinterOutlined, DownOutlined, FilterOutlined } from "@ant-design/icons";
+import { Table, Button, Dropdown } from "antd";
+import { PrinterOutlined, DownOutlined } from "@ant-design/icons";
 import { ReturnButton } from "../../shared/ReturnButton";
 
 const data = [
@@ -23,30 +23,52 @@ const columns = [
     { title: "MÃ LỚP", dataIndex: "classCode", key: "classCode" },
 ];
 
+const exportOptions = [
+    { key: "pdf", label: "pdf" },
+    { key: "xlsx", label: "xlsx" },
+    { key: "csv", label: "csv" },
+    { key: "docx", label: "docx" },
+    { key: "json", label: "json" },
+    { key: "xml", label: "xml" },
+];
+
 const StudentExport = () => {
+
+    const handleExport = ({ key }) => {
+        console.log("Exporting as:", key);
+        // Add your export logic here
+    };
+
     return (
         <div className="m-4 p-4 shadow-md rounded-lg bg-white">
-            {/* Header */}
             <h2 className="text-lg font-semibold text-center mb-4 text-[#4C4E64DE]">Export dữ liệu theo mẫu</h2>
             <p className="text-center text-gray-500">Chọn bộ lọc phù hợp, hệ thống sẽ hiển thị bản xem trước</p>
 
-            {/* Buttons */}
             <div className="flex justify-center gap-3 mt-4">
-                <Button type="primary" className="bg-[#5A9F68] flex items-center" icon={<PrinterOutlined />}>
+                <Button type="primary" className="bg-[#5A9F68]! flex items-center ml-auto" icon={<PrinterOutlined />}>
                     In Mẫu
                 </Button>
-                <Button type="primary" className="bg-[#5A9F68] flex items-center" icon={<DownOutlined />}>
-                    Xuất Dữ Liệu Mặc Định
-                </Button>
-                <Button type="default" icon={<FilterOutlined />} className="border-gray-300 text-gray-600" />
+                <div className="flex">
+                    <Button type="primary" className="bg-[#5A9F68]! rounded-r-none! hover:cursor-default! border-r-2 border-r-gray-500!">
+                        Xuất Dữ Liệu Mặc Định
+                    </Button>
+                    <Dropdown
+                        menu={{ items: exportOptions, onClick: handleExport }}
+                        trigger={["click"]}
+                        placement="bottomLeft"
+                    >
+                        <Button type="primary" className="bg-[#5A9F68]! rounded-l-none! px-3">
+                            <DownOutlined />
+                        </Button>
+                    </Dropdown>
+                </div>
             </div>
 
-            {/* Table */}
-            <div className="mt-6">
-                <Table columns={columns} dataSource={data} pagination={false} bordered />
-            </div>
+            <Table className="my-4" columns={columns} dataSource={data} pagination={false} bordered />
 
-            <ReturnButton />
+            <div className="flex justify-center mt-6">
+                <ReturnButton />
+            </div>
         </div>
     );
 };

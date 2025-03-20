@@ -1,15 +1,16 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input, Button, DatePicker, Select } from "antd";
+import { Input, Button, DatePicker, Select, notification } from "antd";
+import dayjs from "dayjs";
 import useAddStudent from "../../apis/useAddStudent";
-
 import { ReturnButton } from "../../shared/ReturnButton";
 
+// Validation Schema
 const schema = z.object({
     studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
     name: z.string().min(1, "Họ tên là bắt buộc"),
-    dob: z.date().optional(),
+    dob: z.preprocess((val) => val ? dayjs(val).toDate() : undefined, z.date().optional()),
     gender: z.enum(["Nam", "Nữ", "Khác"]).optional(),
     address: z.string().optional(),
     city: z.string().optional(),
@@ -19,36 +20,89 @@ const schema = z.object({
     username: z.string().optional()
 });
 
+// Reusable FormField Component with Error Handling
+const FormField = ({ name, control, errors, placeholder, type = "input", options = [], span = 3 }) => {
+    return (
+        <div className={`col-span-${span}`}>
+            <Controller
+                name={name}
+                control={control}
+                render={({ field }) => {
+                    switch (type) {
+                        case "date":
+                            return (
+                                <DatePicker
+                                    {...field}
+                                    className="w-full h-12"
+                                    placeholder={placeholder}
+                                    value={field.value ? dayjs(field.value) : null}
+                                    onChange={(date) => field.onChange(date ? date.toDate() : undefined)}
+                                />
+                            );
+                        case "select":
+                            return (
+                                <Select
+                                    {...field}
+                                    className="w-full h-12!"
+                                    placeholder={placeholder}
+                                    onChange={(value) => field.onChange(value)}
+                                >
+                                    {options.map((opt) => (
+                                        <Select.Option key={opt} value={opt}>
+                                            {opt}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            );
+                        default:
+                            return <Input {...field} className="w-full h-12" placeholder={placeholder} />;
+                    }
+                }}
+            />
+            {errors[name] && <p className="text-red-500 text-sm mt-1">{errors[name]?.message}</p>}
+        </div>
+    );
+};
+
 export default function StudentNew() {
-    const { register, handleSubmit, formState: { errors }, control } = useForm({
+    const { handleSubmit, formState: { errors }, control, reset } = useForm({
         resolver: zodResolver(schema)
     });
-    console.log(errors);
+
     const addMutation = useAddStudent();
-    const onSubmit = (data) => {
+
+    const [api, contextHolder] = notification.useNotification();
+    const openNotification = () => {
+        api.success({
+            message: `Notification`,
+            description: "uiahsduadhs",
+            placement: "bottomRight",
+        });
+    };
+
+    const onSubmit = async (data) => {
         console.log("Submitted Data:", data);
         // await addMutation.mutateAsync(data);
-        console.log("them ok");
+        // reset();
+        openNotification();
     };
 
     return (
         <div className="p-6 bg-white shadow-md rounded-md">
+            {contextHolder}
             <h2 className="text-center text-2xl font-medium mb-4 text-[#4C4E648A]">Thêm mới sinh viên</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-6 gap-4">
-                <Input className="col-span-2 h-12" placeholder="Mã sinh viên(*)" {...register("studentId")} />
-                <Input className="col-span-4 h-12" placeholder="Họ tên" {...register("name")} />
-                <DatePicker placeholder="Ngày sinh" className="col-span-3 h-12" {...register("dob")} />
-                <Select placeholder="Giới tính" className="col-span-3 h-12!" {...register("gender")}>
-                    <Select.Option value="Nam">Nam</Select.Option>
-                    <Select.Option value="Nữ">Nữ</Select.Option>
-                    <Select.Option value="Khác">Khác</Select.Option>
-                </Select>
-                <Input className="col-span-4 h-12" placeholder="Địa chỉ" {...register("address")} />
-                <Input className="col-span-2 h-12" placeholder="Thành phố" {...register("city")} />
-                <Input className="col-span-3 h-12" placeholder="Email" {...register("email")} />
-                <Input className="col-span-3 h-12" placeholder="Số điện thoại" {...register("phone")} />
-                <Input className="col-span-3 h-12" placeholder="Mã lớp học" {...register("classId")} />
-                <Input className="col-span-3 h-12" placeholder="Username" {...register("username")} />
+                <FormField name="studentId" control={control} errors={errors} placeholder="Mã sinh viên(*)" span={2} />
+                <FormField name="name" control={control} errors={errors} placeholder="Họ tên" span={4} />
+                <FormField name="dob" control={control} errors={errors} placeholder="Ngày sinh" type="date" span={3} />
+                <FormField name="gender" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} span={3} />
+                <FormField name="address" control={control} errors={errors} placeholder="Địa chỉ" span={4} />
+                <FormField name="city" control={control} errors={errors} placeholder="Thành phố" span={2} />
+                <FormField name="email" control={control} errors={errors} placeholder="Email" span={3} />
+                <FormField name="phone" control={control} errors={errors} placeholder="Số điện thoại" span={3} />
+                <FormField name="classId" control={control} errors={errors} placeholder="Mã lớp học" span={3} />
+                <FormField name="username" control={control} errors={errors} placeholder="Username" span={3} />
+
                 <div className="col-span-6 flex justify-center gap-4 mt-4">
                     <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button>
                     <Button type="primary" className="bg-[#43DB61]! h-10!">Lưu và tiếp tục</Button>

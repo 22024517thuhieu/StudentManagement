@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useLocation } from "react-router";
-import { Button, Input, Select, DatePicker, Alert, Form } from "antd";
+import { Button, Input, Select, DatePicker, Alert, Form, notification } from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
 import * as z from "zod";
 import { ReturnButton } from "../../shared/ReturnButton";
 
+// Validation Schema
 const schema = z.object({
     studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
     name: z.string().min(1, "Họ tên là bắt buộc"),
-    dob: z.optional(),
-    gender: z.string().optional(),
+    dob: z.preprocess((val) => val ? dayjs(val).toDate() : undefined, z.date().optional()),
+    gender: z.enum(["Nam", "Nữ", "Khác"]).optional(),
     address: z.string().optional(),
     city: z.string().optional(),
     email: z.string().email("Email không hợp lệ"),
@@ -20,11 +21,52 @@ const schema = z.object({
     username: z.string().optional()
 });
 
+// Reusable FormField Component
+const FormField = ({ name, control, errors, placeholder, type = "input", options = [] }) => (
+    <Form.Item validateStatus={errors[name] ? "error" : ""} help={errors[name]?.message} className="col-span-2">
+        <Controller
+            name={name}
+            control={control}
+            render={({ field }) => {
+                switch (type) {
+                    case "date":
+                        return (
+                            <DatePicker
+                                {...field}
+                                className="w-full h-12"
+                                placeholder={placeholder}
+                                value={field.value ? dayjs(field.value) : null}
+                                onChange={(date) => field.onChange(date ? date.toDate() : undefined)}
+                            />
+                        );
+                    case "select":
+                        return (
+                            <Select
+                                {...field}
+                                className="w-full h-12!"
+                                placeholder={placeholder}
+                                onChange={(value) => field.onChange(value)}
+                            >
+                                {options.map((opt) => (
+                                    <Select.Option key={opt} value={opt}>
+                                        {opt}
+                                    </Select.Option>
+                                ))}
+                            </Select>
+                        );
+                    default:
+                        return <Input {...field} className="w-full h-12" placeholder={placeholder} />;
+                }
+            }}
+        />
+    </Form.Item>
+);
+
 export default function StudentEdit() {
     const location = useLocation();
-    const student = location.state.student;    
+    const student = location.state.student;
 
-    const { handleSubmit, control, formState: { errors }, setError } = useForm({
+    const { handleSubmit, control, formState: { errors }, reset } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
             studentId: student.code,
@@ -37,76 +79,47 @@ export default function StudentEdit() {
             phone: student.phone_number,
             class: student.classid[1],
             username: student.username
-        },
+        }
     });
+
     const [serverError, setServerError] = useState(null);
+
+    const [api, contextHolder] = notification.useNotification();
+    const openNotification = () => {
+        api.success({
+            message: `Notification`,
+            description: "uiahsduadhs",
+            placement: "bottomRight",
+        });
+    };
+
     const onSubmit = async (data) => {
         try {
             console.log(data);
-            // Simulating an API call
-            throw new Error("Lỗi từ server: Không thể lưu dữ liệu"); // Remove this in actual API call
+            // Simulate API call success
+            openNotification();
+            reset();
         } catch (error) {
-            setServerError(error.message);
+            setServerError("Lỗi từ server: Không thể lưu dữ liệu");
         }
     };
 
     return (
         <div className="bg-white p-6 shadow-md rounded-lg max-w-4xl mx-auto">
+            {contextHolder}
             <h2 className="text-xl font-medium text-center mb-4">Cập nhật thông tin sinh viên</h2>
             <Form onFinish={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4">
-                <Controller name="studentId" control={control} render={({ field }) => (
-                    <Form.Item validateStatus={errors.studentId ? "error" : "d"} help={errors.studentId?.message} className="col-span-2">
-                        <Input {...field} placeholder="Mã sinh viên(*)" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="name" control={control} render={({ field }) => (
-                    <Form.Item validateStatus={errors.name ? "error" : ""} help={errors.name?.message} className="col-span-2">
-                        <Input {...field} placeholder="Họ tên" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="dob" control={control} render={({ field }) => (
-                    <Form.Item validateStatus={errors.dob ? "error" : ""} help={errors.dob?.message} className="col-span-2">
-                        <DatePicker {...field} placeholder="Ngày sinh" className="w-full p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="gender" control={control} render={({ field }) => (
-                    <Form.Item className="col-span-2">
-                        <Select {...field} placeholder="Giới tính" className="w-full h-12!">
-                            <Select.Option value="male">Nam</Select.Option>
-                            <Select.Option value="female">Nữ</Select.Option>
-                        </Select>
-                    </Form.Item>
-                )} />
-                <Controller name="address" control={control} render={({ field }) => (
-                    <Form.Item className="col-span-3">
-                        <Input {...field} placeholder="Địa chỉ" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="city" control={control} render={({ field }) => (
-                    <Form.Item className="col-span-1">
-                        <Input {...field} placeholder="Thành phố" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="email" control={control} render={({ field }) => (
-                    <Form.Item validateStatus={errors.email ? "error" : ""} help={errors.email?.message} className="col-span-2">
-                        <Input {...field} placeholder="Email" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="phone" control={control} render={({ field }) => (
-                    <Form.Item validateStatus={errors.phone ? "error" : ""} help={errors.phone?.message} className="col-span-2">
-                        <Input {...field} placeholder="Số điện thoại" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="class" control={control} render={({ field }) => (
-                    <Form.Item className="col-span-2">
-                        <Input {...field} placeholder="Mã lớp học" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
-                <Controller name="username" control={control} render={({ field }) => (
-                    <Form.Item className="col-span-2">
-                        <Input {...field} placeholder="Username" className="p-2 border rounded-md h-12!" />
-                    </Form.Item>
-                )} />
+                <FormField name="studentId" control={control} errors={errors} placeholder="Mã sinh viên(*)" />
+                <FormField name="name" control={control} errors={errors} placeholder="Họ tên" />
+                <FormField name="dob" control={control} errors={errors} placeholder="Ngày sinh" type="date" />
+                <FormField name="gender" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} />
+                <FormField name="address" control={control} errors={errors} placeholder="Địa chỉ" />
+                <FormField name="city" control={control} errors={errors} placeholder="Thành phố" />
+                <FormField name="email" control={control} errors={errors} placeholder="Email" />
+                <FormField name="phone" control={control} errors={errors} placeholder="Số điện thoại" />
+                <FormField name="class" control={control} errors={errors} placeholder="Mã lớp học" />
+                <FormField name="username" control={control} errors={errors} placeholder="Username" />
+
                 <div className="col-span-4 flex justify-center gap-4 mt-4">
                     <ReturnButton />
                     <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button>
