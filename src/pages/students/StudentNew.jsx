@@ -8,14 +8,14 @@ import { ReturnButton } from "../../shared/ReturnButton";
 
 // Validation Schema
 const schema = z.object({
-    studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
-    name: z.string().min(1, "Họ tên là bắt buộc"),
+    code: z.string().min(1, "Mã sinh viên là bắt buộc"),
+    fullname: z.string().min(1, "Họ tên là bắt buộc"),
     dob: z.preprocess((val) => val ? dayjs(val).toDate() : undefined, z.date().optional()),
-    gender: z.enum(["Nam", "Nữ", "Khác"]).optional(),
+    sex: z.enum(["Nam", "Nữ", "Khác"]).optional(),
     address: z.string().optional(),
-    city: z.string().optional(),
+    homecity: z.string().optional(),
     email: z.string().email("Email không hợp lệ"),
-    phone: z.string().regex(/^\d+$/, "Số điện thoại không hợp lệ"),
+    phone_number: z.string().regex(/^\d+$/, "Số điện thoại không hợp lệ"),
     classId: z.string().optional(),
     username: z.string().optional()
 });
@@ -82,8 +82,7 @@ export default function StudentNew() {
 
     const onSubmit = async (data) => {
         console.log("Submitted Data:", data);
-        // await addMutation.mutateAsync(data);
-        // reset();
+        await addMutation.mutateAsync(data);
         openNotification();
     };
 
@@ -92,14 +91,14 @@ export default function StudentNew() {
             {contextHolder}
             <h2 className="text-center text-2xl font-medium mb-4 text-[#4C4E648A]">Thêm mới sinh viên</h2>
             <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-6 gap-4">
-                <FormField name="studentId" control={control} errors={errors} placeholder="Mã sinh viên(*)" span={2} />
-                <FormField name="name" control={control} errors={errors} placeholder="Họ tên" span={4} />
+                <FormField name="code" control={control} errors={errors} placeholder="Mã sinh viên(*)" span={2} />
+                <FormField name="fullname" control={control} errors={errors} placeholder="Họ tên" span={4} />
                 <FormField name="dob" control={control} errors={errors} placeholder="Ngày sinh" type="date" span={3} />
-                <FormField name="gender" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} span={3} />
+                <FormField name="sex" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} span={3} />
                 <FormField name="address" control={control} errors={errors} placeholder="Địa chỉ" span={4} />
-                <FormField name="city" control={control} errors={errors} placeholder="Thành phố" span={2} />
+                <FormField name="homecity" control={control} errors={errors} placeholder="Thành phố" span={2} />
                 <FormField name="email" control={control} errors={errors} placeholder="Email" span={3} />
-                <FormField name="phone" control={control} errors={errors} placeholder="Số điện thoại" span={3} />
+                <FormField name="phone_number" control={control} errors={errors} placeholder="Số điện thoại" span={3} />
                 <FormField name="classId" control={control} errors={errors} placeholder="Mã lớp học" span={3} />
                 <FormField name="username" control={control} errors={errors} placeholder="Username" span={3} />
 
