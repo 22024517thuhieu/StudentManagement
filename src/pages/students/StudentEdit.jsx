@@ -7,17 +7,19 @@ import dayjs from "dayjs";
 import * as z from "zod";
 import { ReturnButton } from "../../shared/ReturnButton";
 
+import useUpdateStudent from "../../apis/useUpdateStudent";
+
 // Validation Schema
 const schema = z.object({
-    studentId: z.string().min(1, "Mã sinh viên là bắt buộc"),
-    name: z.string().min(1, "Họ tên là bắt buộc"),
+    code: z.string().min(1, "Mã sinh viên là bắt buộc"),
+    fullname: z.string().min(1, "Họ tên là bắt buộc"),
     dob: z.preprocess((val) => val ? dayjs(val).toDate() : undefined, z.date().optional()),
-    gender: z.enum(["Nam", "Nữ", "Khác"]).optional(),
+    sex: z.enum(["Nam", "Nữ", "Khác"]).optional(),
     address: z.string().optional(),
-    city: z.string().optional(),
+    homecity: z.string().optional(),
     email: z.string().email("Email không hợp lệ"),
-    phone: z.string().regex(/^\d{10,11}$/, "Số điện thoại không hợp lệ"),
-    class: z.string().optional(),
+    phone_number: z.string().regex(/^\d{10,11}$/, "Số điện thoại không hợp lệ"),
+    // class: z.string().optional(),
     username: z.string().optional()
 });
 
@@ -65,18 +67,19 @@ const FormField = ({ name, control, errors, placeholder, type = "input", options
 export default function StudentEdit() {
     const location = useLocation();
     const student = location.state.student;
-
-    const { handleSubmit, control, formState: { errors }, reset } = useForm({
+    console.log(student);
+    
+    const { handleSubmit, control, formState: { errors } } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
-            studentId: student.code,
-            name: student.fullname,
+            code: student.code,
+            fullname: student.fullname,
             dob: dayjs(student.dob),
-            gender: student.sex,
+            sex: student.sex,
             address: student.address,
-            city: student.homecity,
+            homecity: student.homecity,
             email: student.email,
-            phone: student.phone_number,
+            phone_number: student.phone_number,
             class: student.classid[1],
             username: student.username
         }
@@ -93,12 +96,12 @@ export default function StudentEdit() {
         });
     };
 
+    const useUpdateMutation = useUpdateStudent();
     const onSubmit = async (data) => {
         try {
             console.log(data);
-            // Simulate API call success
+            useUpdateMutation.mutate({ studentId: student.id, updatedData: data })
             openNotification();
-            reset();
         } catch (error) {
             setServerError("Lỗi từ server: Không thể lưu dữ liệu");
         }
@@ -109,14 +112,14 @@ export default function StudentEdit() {
             {contextHolder}
             <h2 className="text-xl font-medium text-center mb-4">Cập nhật thông tin sinh viên</h2>
             <Form onFinish={handleSubmit(onSubmit)} className="grid grid-cols-4 gap-4">
-                <FormField name="studentId" control={control} errors={errors} placeholder="Mã sinh viên(*)" />
-                <FormField name="name" control={control} errors={errors} placeholder="Họ tên" />
+                <FormField name="code" control={control} errors={errors} placeholder="Mã sinh viên(*)" />
+                <FormField name="fullname" control={control} errors={errors} placeholder="Họ tên" />
                 <FormField name="dob" control={control} errors={errors} placeholder="Ngày sinh" type="date" />
-                <FormField name="gender" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} />
+                <FormField name="sex" control={control} errors={errors} placeholder="Giới tính" type="select" options={["Nam", "Nữ", "Khác"]} />
                 <FormField name="address" control={control} errors={errors} placeholder="Địa chỉ" />
-                <FormField name="city" control={control} errors={errors} placeholder="Thành phố" />
+                <FormField name="homecity" control={control} errors={errors} placeholder="Thành phố" />
                 <FormField name="email" control={control} errors={errors} placeholder="Email" />
-                <FormField name="phone" control={control} errors={errors} placeholder="Số điện thoại" />
+                <FormField name="phone_number" control={control} errors={errors} placeholder="Số điện thoại" />
                 <FormField name="class" control={control} errors={errors} placeholder="Mã lớp học" />
                 <FormField name="username" control={control} errors={errors} placeholder="Username" />
 
