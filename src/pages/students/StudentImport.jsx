@@ -1,4 +1,4 @@
-import { Table, Button, Modal } from "antd";
+import { Table, Button, Modal, Spin } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { useState } from "react";
 
@@ -17,16 +17,14 @@ const dataSource = [
 ];
 
 export default function StudentImport() {
-    const {
-        isModalVisible,
-        showModal,
-        handleClose,
-    } = useModal();
+    const { isModalVisible, showModal, handleClose } = useModal();
     const useDeleteItemsMutation = useDeleteItems();
     const { data, isLoading } = useUploadFile();
     console.log(data);
-    
+
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [isImporting, setIsImporting] = useState(false);
+    const [showResults, setShowResults] = useState(false);
 
     const allColumns = [
         { key: "studentId", title: "Mã Sinh Viên", dataIndex: "studentId" },
@@ -50,10 +48,11 @@ export default function StudentImport() {
             ),
         },
     ];
+
     const deleteStudents = () => {
         // useDeleteItemsMutation.mutate(selectedRowKeys);
         handleClose();
-    }
+    };
 
     return (
         <div className="m-4 p-4 shadow-md rounded-lg bg-white">
@@ -63,27 +62,42 @@ export default function StudentImport() {
             <div className="flex justify-between items-center mt-4">
                 <Button danger onClick={showModal}>Xóa dữ liệu đã chọn</Button>
                 <div className="flex gap-2">
-                    <ImportButton />
+                    <ImportButton setIsImporting={setIsImporting} setShowResults={setShowResults} />
                     <Button className="border-green-500 text-green-500">Xuất Mẫu Import</Button>
                 </div>
             </div>
 
-            <p className="text-center mt-4">Import thành công <span className="text-green-500 font-medium">04</span> bản ghi</p>
+            {/* Show loading spinner during import */}
+            {isImporting && (
+                <div className="flex justify-center mt-4">
+                    <Spin size="large" />
+                </div>
+            )}
 
-            <Table
-                className="mt-4"
-                columns={allColumns}
-                dataSource={dataSource}
-                rowSelection={{
-                    selectedRowKeys,
-                    onChange: setSelectedRowKeys,
-                }}
-                pagination={false}
-            />
+            {/* Show results after import is done */}
+            {showResults && (
+                <>
+                    <p className="text-center mt-4">
+                        Import thành công <span className="text-green-500 font-medium">04</span> bản ghi
+                    </p>
 
-            <div className="flex justify-center mt-6">
-                <ReturnButton />
-            </div>
+                    <Table
+                        className="mt-4"
+                        columns={allColumns}
+                        dataSource={dataSource}
+                        rowSelection={{
+                            selectedRowKeys,
+                            onChange: setSelectedRowKeys,
+                        }}
+                        pagination={false}
+                    />
+
+                    <div className="flex justify-center mt-6">
+                        <ReturnButton />
+                    </div>
+                </>
+            )}
+
             <Modal
                 title=" "
                 open={isModalVisible}
@@ -95,11 +109,14 @@ export default function StudentImport() {
                 <div className="flex flex-col items-center borde p-4 rounded-lg text-red-700">
                     {selectedRowKeys.length === 0
                         ? <p className="text-center">Vui lòng chọn dữ liệu để xóa</p>
-                        : <><p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
+                        : <>
+                            <p>BẠN ĐỒNG Ý XÓA DỮ LIỆU ĐÃ CHỌN KHÔNG?</p>
                             <div className="flex gap-4 mt-4">
                                 <Button className="bg-red-700! text-white! px-6" onClick={deleteStudents}>ĐỒNG Ý</Button>
                                 <Button className="border text-red-700! px-6" onClick={handleClose}>KHÔNG</Button>
-                            </div></>}
+                            </div>
+                        </>
+                    }
                 </div>
             </Modal>
         </div>

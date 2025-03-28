@@ -3,16 +3,22 @@ import { Button, Dropdown, Menu } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import useUploadFile from "../../../apis/useUploadFile";
 
-export default function ImportButton() {
+export default function ImportButton({ setIsImporting, setShowResults }) {
     const fileInputRef = useRef(null);
     const uploadFileMutation = useUploadFile();
 
     // Handle file selection
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            uploadFileMutation.mutate(file);
-        }
+    const handleFileChange = async (event) => {
+        setIsImporting(true);
+        setShowResults(false);
+        // const file = event.target.files[0];
+        // if (file) {
+        //     await uploadFileMutation.mutateAsync(file);
+        // }
+        setTimeout(() => {
+            setIsImporting(false);
+            setShowResults(true);
+        }, 2000); // Simulate import process
     };
 
     const menu = (
