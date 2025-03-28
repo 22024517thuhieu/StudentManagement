@@ -1,6 +1,5 @@
 import { useMutation } from "react-query";
 import axios from "axios";
-import { message } from "antd";
 
 function formatDateToYYYYMMDD(isoString) {
     if (!isoString) return null;
@@ -12,14 +11,14 @@ function formatDateToYYYYMMDD(isoString) {
 export default function useAddStudent() {
     return useMutation(
         async (newStudent) => {
-            return axios.post(`http://localhost:8069/odoo_controller/students/add`, {
+            return await axios.post(`http://localhost:8069/odoo_controller/students/add`, {
                 ...newStudent,
                 dob: formatDateToYYYYMMDD(newStudent.dob)
             });
         },
         {
-            onSuccess: () => message.success("Thêm sinh viên thành công!"),
-            onError: () => message.error("Thêm sinh viên thất bại!"),
+            onSuccess: () => console.log("Thêm sinh viên thành công!"),
+            onError: () => console.log("Thêm sinh viên thất bại!"),
         }
     );
 }

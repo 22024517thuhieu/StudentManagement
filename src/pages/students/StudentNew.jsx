@@ -72,18 +72,25 @@ export default function StudentNew() {
     const addMutation = useAddStudent();
 
     const [api, contextHolder] = notification.useNotification();
-    const openNotification = () => {
+    const openNotification = (status, message) => {
+        status ?
         api.success({
-            message: `Notification`,
-            description: "uiahsduadhs",
+            message: `Thong bao`,
+            description: message,
+            placement: "bottomRight",
+        }) :
+        api.error({
+            message: `Thong bao`,
+            description: message,
             placement: "bottomRight",
         });
     };
 
     const onSubmit = async (data) => {
-        console.log("Submitted Data:", data);
-        await addMutation.mutateAsync(data);
-        openNotification();
+        const response = await addMutation.mutateAsync(data);
+        console.log(response);
+        openNotification(response.data.status == "success", response.data.message);
+        // reset();
     };
 
     return (
@@ -103,8 +110,8 @@ export default function StudentNew() {
                 <FormField name="username" control={control} errors={errors} placeholder="Username" span={3} />
 
                 <div className="col-span-6 flex justify-center gap-4 mt-4">
-                    <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button>
-                    <Button type="primary" className="bg-[#43DB61]! h-10!">Lưu và tiếp tục</Button>
+                    {/* <Button type="primary" htmlType="submit" className="bg-[#5A9F68]! h-10!">Lưu</Button> */}
+                    <Button type="primary" htmlType="submit" className="bg-[#43DB61]! h-10!">Lưu và tiếp tục</Button>
                     <ReturnButton />
                 </div>
             </form>
