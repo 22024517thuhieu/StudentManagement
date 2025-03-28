@@ -19,8 +19,8 @@ export default function useUpdateStudent() {
             });
         },
         {
-            onSuccess: () => message.success("Cập nhật thành công!"),
-            onError: () => message.error("Cập nhật thất bại!"),
+            onSuccess: () => console.log("Cập nhật thành công!"),
+            onError: () => console.log("Cập nhật thất bại!"),
         }
     );
 }
